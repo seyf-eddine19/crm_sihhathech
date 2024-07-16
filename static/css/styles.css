@@ -1,0 +1,222 @@
+/*===== GOOGLE FONTS =====*/
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap");
+/*===== VARIABLES CSS =====*/
+:root {
+  /*========== Colors ==========*/
+  --first-color: #32b9cc;
+  --title-color: #333444;
+  --text-color: #56565d;
+  --body-color: #F8F8F8;
+  --container-color: #f4f4f4;
+  --shado-color: 0 4px 25px rgba(14,36,49,.15);
+
+  /*========== Font and typography ==========*/
+  --body-font: 'Poppins', sans-serif;
+  --big-font-size: 3rem;
+  --h1-font-size: 2.5rem;
+  --h2-font-size: 2rem;
+  --h3-font-size: 1.5rem;
+  --normal-font-size: 1rem;
+  --small-font-size: .875rem;
+  --smaller-font-size: .813rem;
+
+  /*========== Font weight ==========*/
+  --font-medium: 500;
+  --font-semi-bold: 600;
+
+  /*========== Margenes ==========*/
+  --mb-1: .5rem;
+  --mb-2: 1rem;
+  --mb-3: 1.5rem;
+  --mb-4: 2.5rem;
+  --mb-5: 3rem;
+  --mb-6: 3.5rem;
+
+  /*========== z index ==========*/
+  --z-back: -10;
+  --z-normal: 1;
+  --z-tooltip: 10;
+  --z-fixed: 100;
+
+  /*========== = ==========*/
+  --nav-height: 3rem;
+}
+@media screen and (max-width: 768px){
+  :root{
+    --big-font-size: 1.5rem;
+    --h1-font-size: 1.5rem;
+    --h2-font-size: 1.25rem;
+    --h3-font-size: 1rem;
+    --normal-font-size: 0.938rem;
+    --small-font-size: .813rem;
+    --smaller-font-size: .75rem;
+    
+    --mb-4: 1.5rem;
+    --mb-5: 2rem;
+    --mb-6: 3rem;
+  }
+}
+/*========== BASE ==========*/
+*, ::before, ::after{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+html{
+  scroll-behavior: smooth;
+}
+body{
+  position: relative;
+  background-color: #eaeef3;
+  font-family: var(--body-font);
+  font-size: var(--normal-font-size);
+  color: var(--text-color);
+  line-height: 1.6;
+  min-height: 100vh;
+}
+h1, h2, h3, h4, h5, h6 {
+  color: var(--title-color);
+}
+p {
+  color: var(--text-color);
+  font-size: var(--normal-font-size);
+}
+pre {
+  font-family: var(--body-font);
+  white-space: pre-wrap;
+  font-size: var(--normal-font-size);
+}
+input, textarea {
+  width: 100%;
+  font-family: var(--body-font);
+  font-size: var(--normal-font-size);
+  background-color: transparent;
+  border: 0;
+  padding: 7px 12px;
+}
+button {
+  font-family: var(--body-font);
+  font-size: var(--normal-font-size);
+}
+textarea {
+  height: 180px;
+}
+ul{
+  list-style: none;
+}
+a{
+  text-decoration: none;
+}
+img, video{
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+/*===== HEADER =====*/
+.header {
+    width: 100%;
+    height: 60px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    background-color: #ffffff;
+    gap:  var(--mb-1);
+}
+.nav_logo {
+    min-width: 240px;
+    background: #6673fc;
+    display: inline-block;
+    float: left;
+}
+.nav_logo img {
+    width: auto;
+    height: 50px;
+    margin: 5px auto;
+}
+.dropdown {
+    position: relative;
+}
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    min-width: 160px;
+    max-width: 355px;
+    width: 355px;
+    top: 42px;
+    right: 0;
+    left: auto;
+    background-color: var(--container-color);
+    z-index: var(--z-tooltip);
+}
+.top-menu {
+    width: 100%;
+}
+.top-menu .nav {
+    display: flex;
+    align-items: center;
+    float: right;
+    gap:  var(--mb-1);
+}
+i {
+    font-size: 20px;
+}
+a.dropdown-toggle {
+    padding: 0 10px;
+}
+.badge {
+    width: 18px;
+    height: 18px;
+    position: absolute;
+    padding: 1px 2px;
+    top: -6px;
+    right: 0px;
+    font-weight: 600;
+    color: #ffffff;
+    border-radius: 16px;
+    font-size: 11px !important;
+    -webkit-border-radius: 12px !important;
+    -moz-border-radius: 12px !important;
+    border-radius: 12px !important;
+    text-shadow: none !important;
+    text-align: center;
+}
+.headerBadgeColor1 {
+    background-color: #ff7400;
+}
+.input-group {
+    width: 100%;
+    max-width: 240px;
+    position: relative;
+    display: flex;
+    align-items: stretch;
+    background-color: var(--container-color);
+    border-radius: 5px;
+}
+.input-group a {
+    color: var(--text-color);
+    padding: 12px 12px 7px;
+}
+/*===== ASIDE =====*/
+.aside {
+    float: left;
+    width: 240px;
+    height: 100vh;
+    background-color: #ffffff;
+}
+/*===== MAIN =====*/
+.main {
+    width: calc(100% - 240px);
+    min-height: 600px;
+    margin-left: 240px;
+    margin-top: 0;
+    padding: 25px 20px 10px;
+}
+/*===== FOOTER =====*/
+.footer {
+    margin-left: 235px;
+    color: #091d3e;
+    background: var(--body-color);
+    text-align: center;
+    font-size: var(--small-font-size);
+    font-weight: var(--font-medium);
+  }

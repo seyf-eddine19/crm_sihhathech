@@ -1,0 +1,118 @@
+{% load static %}
+<header class="header" id="header">
+    <a title="Logo" href="/" class="nav_logo">
+        <img max-width="100%" height="auto" class="my-logo" id="my-logo" src="{% static 'img/Logo.png' %}" title="Logo" alt="AFIND">
+    </a>
+    <div class="nav_toggle">
+        <i class="bx bx-menu"></i>
+    </div>
+    <h4>{% block PageTitle %}Dashbord{% endblock %}</h4>
+    <!-- header menu -->
+    <div class="top-menu">
+        <ul class="nav navbar-nav">
+            <form class="search-form input-group" action="#" method="GET">
+                <input type="text" class="form-control" placeholder="Search..." name="query">
+                <a href="javascript:;" class="btn submit">
+                    <i class="bx bx-search"></i>
+                </a>
+            </form>      
+            <!-- notification dropdown -->
+            <li class="dropdown dropdown-notification" id="header_notification_bar">
+                <a class="dropdown-toggle" data-bs-toggle="dropdown" data-hover="dropdown" data-close-others="true">
+                    <i class='bx bx-bell' ></i>
+                    <span class="badge headerBadgeColor1">{% block NotifBadge %} 6 {% endblock %}</span>
+                </a>
+                <ul class="dropdown-menu">
+                    <li class="external">
+                        <h3><span class="bold">Notifications</span></h3>
+                        <span class="notification-label purple-bgcolor">New 6</span>
+                    </li>
+                    <li>
+                        <div class="slimScrollDiv" style="position: relative; overflow: hidden; width: auto;">
+                            <ul class="dropdown-menu-list small-slimscroll-style" data-handle-color="#637283" style="overflow: hidden; width: auto;">
+                                <li>
+                                    <a href="javascript:;">
+                                        <span class="time">just now</span>
+                                        <span class="details">
+                                            <span class="notification-icon circle deepPink-bgcolor"><i class="fa fa-check"></i></span>
+                                            Congratulations!. </span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="javascript:;">
+                                        <span class="time">3 mins</span>
+                                        <span class="details">
+                                            <span class="notification-icon circle purple-bgcolor"><i class="fa fa-user o"></i></span>
+                                            <b>John Micle </b>is now following you. </span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="javascript:;">
+                                        <span class="time">7 mins</span>
+                                        <span class="details">
+                                            <span class="notification-icon circle blue-bgcolor"><i class="fa fa-comments-o"></i></span>
+                                            <b>Sneha Jogi </b>sent you a message. </span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="javascript:;">
+                                        <span class="time">12 mins</span>
+                                        <span class="details">
+                                            <span class="notification-icon circle pink"><i class="fa fa-heart"></i></span>
+                                            <b>Ravi Patel </b>like your photo. </span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="javascript:;">
+                                        <span class="time">15 mins</span>
+                                        <span class="details">
+                                            <span class="notification-icon circle yellow"><i class="fa fa-warning"></i></span> Warning! </span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="javascript:;">
+                                        <span class="time">10 hrs</span>
+                                        <span class="details">
+                                            <span class="notification-icon circle red"><i class="fa fa-times"></i></span> Application error. </span>
+                                    </a>
+                                </li>
+                            </ul>
+                            <div class="slimScrollBar" style="background: rgb(158, 165, 171); width: 5px; position: absolute; top: 0px; opacity: 0.4; display: block; border-radius: 7px; z-index: 99; right: 1px;"></div>
+                            <div class="slimScrollRail" style="width: 5px; height: 100%; position: absolute; top: 0px; display: none; border-radius: 7px; background: rgb(51, 51, 51); opacity: 0.2; z-index: 90; right: 1px;"></div>
+                        </div>
+                        <div class="dropdown-menu-footer">
+                            <a href="javascript:void(0)"> All notifications </a>
+                        </div>
+                    </li>
+                </ul>
+            </li>
+            <!-- manage user dropdown -->
+            <li class="dropdown dropdown-user">
+                <i class="bx bx-user" id=""></i> {{ request.user.username }}
+                <a class="dropdown-toggle" data-bs-toggle="dropdown" data-hover="dropdown" data-close-others="true">
+                    <i class='bx bx-dots-vertical-rounded'></i>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-default">
+                    <li>
+                        <a href="user_profile">
+                            <i class="icon-user"></i> 
+                            Profile 
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <i class="icon-settings"></i> 
+                            Settings
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'logout' %}">
+                            <i class="icon-logout"></i> 
+                            Log Out 
+                        </a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</header>

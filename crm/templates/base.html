@@ -1,0 +1,31 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="author" content="">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@2.0.5/css/boxicons.min.css">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+    <link rel="shortcut icon" type="image/png" href="{% static 'img/Logo.jpg' %}">
+    <title>{% block title %}SIHHATECH CRM{% endblock %}</title>
+</head>
+<body>
+    <!--===== HEADER =====-->
+    {% include "header.html" %}
+    <!--===== ASIDE =====-->
+    {% include "aside.html" %}
+    <!--===== MAIN =====-->
+    <main class="main">
+        {% block content %}
+        {% endblock content %}
+    </main>
+    <!--===== FOOTER =====-->
+    {% include "footer.html" %}
+    <!--===== SCRIPT JS =====-->
+    <script src="{% static 'js/script.js' %}"></script>
+</body>
+</html>
+
