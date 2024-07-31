@@ -1,0 +1,188 @@
+{% extends "admin/index.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+
+<form method="get" class="filter-form">
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary"><i class='bx bx-filter-alt'></i></button>
+</form>
+
+<div class="statistics">
+    <div class="stat-item">
+        <h3>Total Clients</h3>
+        <p>{{ total_clients }}</p>
+    </div>
+    <div class="stat-item">
+        <h3>Total Prospects</h3>
+        <p>{{ total_prospects }}</p>
+    </div>
+    <div class="stat-item">
+        <h3>Total Abonnements</h3>
+        <p>{{ total_abonnements }}</p>
+    </div>
+    <div class="stat-item">
+        <h3>Total Renouvellements</h3>
+        <p>{{ total_renouvellements }}</p>
+    </div>
+    <div class="stat-item">
+        <h3>Total Boost Services</h3>
+        <p>{{ total_boost_services }}</p>
+    </div>
+    <div class="stat-item">
+        <h3>Average Boost Price</h3>
+        <p>{{ avg_boost_price }}</p>
+    </div>
+</div>
+
+<div class="chart-container">
+    <canvas id="clientChart"></canvas>
+    <canvas id="boostPriceChart"></canvas>
+    <canvas id="boostPriceByClientChart"></canvas>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const clientChartCtx = document.getElementById('clientChart').getContext('2d');
+        const boostPriceChartCtx = document.getElementById('boostPriceChart').getContext('2d');
+        const boostPriceByClientChartCtx = document.getElementById('boostPriceByClientChart').getContext('2d');
+
+        const clientChart = new Chart(clientChartCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Clients', 'Prospects'],
+                datasets: [{
+                    data: [{{ total_clients }}, {{ total_prospects }}],
+                    backgroundColor: ['#36a2eb', '#ff6384']
+                }]
+            }
+        });
+
+        const boostPriceChart = new Chart(boostPriceChartCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Average Boost Price'],
+                datasets: [{
+                    label: 'Average Boost Price',
+                    data: [{{ avg_boost_price|default:0 }}],
+                    backgroundColor: ['#ff6384']
+                }]
+            }
+        });
+
+        const boostData = {{ boost_data|safe }};
+        const boostLabels = [];
+        const boostDatasets = [];
+
+        for (const [client, months] of Object.entries(boostData)) {
+            const data = [];
+            for (const [month, total] of Object.entries(months)) {
+                if (!boostLabels.includes(month)) {
+                    boostLabels.push(month);
+                }
+                data.push(total);
+            }
+            boostDatasets.push({
+                label: client,
+                data: data,
+                backgroundColor: '#' + Math.floor(Math.random()*16777215).toString(16)
+            });
+        }
+
+        const boostPriceByClientChart = new Chart(boostPriceByClientChartCtx, {
+            type: 'bar',
+            data: {
+                labels: boostLabels,
+                datasets: boostDatasets
+            },
+            options: {
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Month'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Total Boost Price'
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
+
+<style>
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f6f9;
+}
+
+h2, h3 {
+    color: #343a40;
+}
+
+.filter-form {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.statistics {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.stat-item {
+    flex: 1;
+    min-width: 200px;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.stat-item h3 {
+    margin-bottom: 10px;
+    font-size: 1.2em;
+}
+
+.chart-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+}
+
+.chart-container canvas {
+    max-width: 45%;
+    max-height: 300px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    margin-bottom: 30px;
+}
+/* 
+.btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    color: #fff;
+    background-color: #007bff;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+    background-color: #0056b3;
+} */
+</style>
+{% endblock %}

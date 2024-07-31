@@ -30,7 +30,8 @@ ALLOWED_HOSTS = []
 
 # Application definition
 
-INSTALLED_APPS = [
+INSTALLED_APPS = [ 
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -39,6 +40,48 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'crm.apps.CrmConfig',
 ]
+
+JAZZMIN_SETTINGS = {
+    # Other settings...
+    "site_title": "SIHHATECH CRM",
+    "site_header": "SIHHATECH CRM",
+    "site_brand": "SIHHATECH CRM",
+    "site_logo": "img/Logo.svg",
+    "site_logo_classes": "img-circle",
+    "welcome_sign": "Welcome to My Admin",
+    "copyright": "My Company Ltd",
+    "search_model": "crm.Client",  # Set to your Client model
+    "user_avatar": None,
+    "topmenu_links": [
+        {"name": "Accueil", "url": "admin:index", "permissions": ["auth.view_user"]},
+        {"model": "crm.Client", "name": "Clients", "search_url": "admin:crm_client_changelist", "search_description": "Rechercher Clients..."},
+        {"app": "books", "name": "Livres"},
+    ],
+    "icons": {
+        "auth": "fas fa-users-cog",
+        "auth.user": "fas fa-user",
+        "auth.Group": "fas fa-users",
+        "crm.Client": "fas fa-address-book",
+        "crm.ClientProfil": "fas fa-id-card",
+        "crm.Telephone": "fas fa-phone",
+        "crm.AbonnementType": "fas fa-book",
+        "crm.Version": "fas fa-code-branch",
+        "crm.Abonnement": "fas fa-file-contract",
+        "crm.Renouvellement": "fas fa-sync",
+        "crm.BoostService": "fas fa-rocket",
+        "crm.ClientService": "fas fa-code-branch",
+    },
+    "show_ui_builder": True,
+    "changeform_format": "horizontal_tabs",
+    "changeform_format_overrides": {"auth.user": "collapsible", "auth.group": "vertical_tabs"},
+    "related_modal_active": True,
+    "sidemenu": [
+        {"name": "Static Page", "url": "static_admin", "icon": "fas fa-file-alt", "permissions": ["auth.view_user"]},
+        {"model": "crm.Client", "name": "Clients"},
+        {"app": "books", "name": "Livres"},
+    ]
+}
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -138,3 +181,4 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # git clone https://github.com/seyf-eddine19/crm_sihhathech.git
 # virtualenv venv
+# source venv/bin/activate

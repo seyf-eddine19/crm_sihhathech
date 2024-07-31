@@ -7,7 +7,6 @@ class Client(models.Model):
         ('Client', 'Client'),
         ('Prospect', 'Prospect'),
     ]
-
     id = models.AutoField(primary_key=True)
     client_or_prospect = models.CharField(max_length=50, choices=CLIENT_OR_PROSPECT_CHOICES)
     nom_commercial = models.CharField(max_length=100)
@@ -16,7 +15,13 @@ class Client(models.Model):
     specialites = models.CharField(max_length=255)
     wilaya = models.CharField(max_length=100)
     commune = models.CharField(max_length=100)
+    
+    def __str__(self):
+        return f"{self.nom} {self.prenom}"
+    
 
+class ClientProfil(models.Model):
+    client = models.OneToOneField(Client, on_delete=models.CASCADE, primary_key=True)
     insertion_gps = models.BooleanField()
     comment_insertion_gps = models.CharField(max_length=255, blank=True, null=True)
 
@@ -44,7 +49,7 @@ class Client(models.Model):
     comment_appel_activation = models.CharField(max_length=255, blank=True, null=True)
 
     def __str__(self):
-        return f"{self.nom} {self.prenom}"
+        return f"Profile for {self.client.nom} {self.client.prenom}"
 
 
 class Telephone(models.Model):
@@ -67,12 +72,12 @@ class AbonnementType(models.Model):
 class Version(models.Model):
     version = models.CharField(max_length=50)
     abonnement_type = models.ForeignKey(AbonnementType, on_delete=models.CASCADE, related_name='versions')
+    
     def __str__(self):
-        return self.version
+        return f"{self.abonnement_type}|{self.version}"
 
 
 class Abonnement(models.Model):
-    id = models.AutoField(primary_key=True)
     client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='abonnements')
     type_abonnement = models.ForeignKey(AbonnementType, on_delete=models.CASCADE, related_name='abonnements')
     version_offre = models.ForeignKey(Version, on_delete=models.CASCADE, related_name='abonnements')
@@ -83,12 +88,11 @@ class Abonnement(models.Model):
     date_debut_abonnement = models.DateField()
     
     def __str__(self):
-        return f"{self.client} - {self.type_abonnement}|{self.version_offre}"
+        return f"{self.client} - {self.version_offre}"
 
 
 class Renouvellement(models.Model):
-    id = models.AutoField(primary_key=True)
-    abonnement = models.ForeignKey(Abonnement, on_delete=models.CASCADE)
+    abonnement = models.OneToOneField(Abonnement, on_delete=models.CASCADE, related_name='renouvellement', primary_key=True)
     date_fin_abonnement = models.DateField()
     date_preavis_renouvellement = models.DateField()
 
@@ -111,22 +115,18 @@ class Renouvellement(models.Model):
 
 
 class BoostService(models.Model):
-    id = models.AutoField(primary_key=True)
     abonnement = models.ForeignKey(Abonnement, on_delete=models.CASCADE)
     mois = models.IntegerField()
     publication_affiche_fb = models.BooleanField()
-    comment_publication_affiche_fb = models.CharField(max_length=255)
     boost_prix = models.DecimalField(max_digits=15, decimal_places=2, default=0.00)
     date_boost = models.DateField(default='')
     date_fin = models.DateField()
-    # taux_satisfaction = models.IntegerField()
 
     def __str__(self):
-        return f"Boost for {self.abonnement}"
+        return f"Boost mois {self.mois} - {self.abonnement}"
 
 
 class ClientService(models.Model):
-    id = models.AutoField(primary_key=True)
     boost_service = models.OneToOneField(BoostService, on_delete=models.CASCADE, related_name='client_service')
     mail_pub_facebook = models.BooleanField()
     comment_mail_pub_facebook = models.CharField(max_length=255, blank=True, null=True)
@@ -138,5 +138,5 @@ class ClientService(models.Model):
     comment_appel_resultat = models.CharField(max_length=255, blank=True, null=True)
 
     def __str__(self):
-        return f"Client Service for {self.boost_service.abonnement}"
+        return f"Client Service for {self.boost_service.abonnement} - mois {self.boost_service.mois}"
     

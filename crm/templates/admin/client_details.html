@@ -1,0 +1,204 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+{% load custom_filters %}
+
+{% block content %}
+<div class="container-fluid">
+    <h1 class="page-header">{{ client.nom }} {{ client.prenom }} - Details</h1>
+
+    <!-- Client Information -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h2>Client Information</h2>
+        </div>
+        <div class="card-body">
+            <p><strong>Commercial Name:</strong> {{ client.nom_commercial }}</p>
+            <p><strong>Wilaya:</strong> {{ client.wilaya }}</p>
+            <p><strong>Commune:</strong> {{ client.commune }}</p>
+            <p><strong>Specialities:</strong> {{ client.specialites }}</p>
+            <p><strong>Client or Prospect:</strong> {{ client.client_or_prospect }}</p>
+        </div>
+    </div>
+
+    <!-- Telephones -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h2>Telephones</h2>
+        </div>
+        <div class="card-body">
+            {% if telephones %}
+                <ul class="list-group">
+                    {% for telephone in telephones %}
+                    <li class="list-group-item">{{ telephone.telephone_number }}</li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No telephones available</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Profiles -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h2>Profiles</h2>
+        </div>
+        <div class="card-body">
+            {% if profils %}
+                <ul class="list-group">
+                    {% for profil in profils %}<li class="list-group-item">
+                        <strong>Insertion GPS:</strong> {{ profil.insertion_gps }}<br>
+                        {% if not profil.insertion_gps %}
+                            <strong>Comment Insertion GPS:</strong> {{ profil.comment_insertion_gps|default:"No comment available" }}<br>
+                        {% endif %}
+                    
+                        <strong>Integration Photos:</strong> {{ profil.integration_photos }}<br>
+                        {% if not profil.integration_photos %}
+                            <strong>Comment Integration Photos:</strong> {{ profil.comment_integration_photos|default:"No comment available" }}<br>
+                        {% endif %}
+                    
+                        <strong>Remplissage Services Cabinet:</strong> {{ profil.remplissage_services_cabinet }}<br>
+                        {% if not profil.remplissage_services_cabinet %}
+                            <strong>Comment Remplissage Services Cabinet:</strong> {{ profil.comment_remplissage_services_cabinet|default:"No comment available" }}<br>
+                        {% endif %}
+                    
+                        <strong>Remarque Client:</strong> {{ profil.remarque_client }}<br>
+                        {% if not profil.remarque_client %}
+                            <strong>Comment Remarque Client:</strong> {{ profil.comment_remarque_client|default:"No comment available" }}<br>
+                        {% endif %}
+                    
+                        <strong>Agenda:</strong> {{ profil.agenda }}<br>
+                        {% if not profil.agenda %}
+                            <strong>Comment Agenda:</strong> {{ profil.comment_agenda|default:"No comment available" }}<br>
+                        {% endif %}
+                    
+                        <strong>Mot de Passe Contrat:</strong> {{ profil.mot_de_passe_contrat }}<br>
+                        {% if not profil.mot_de_passe_contrat %}
+                            <strong>Comment Mot de Passe Contrat:</strong> {{ profil.comment_mot_de_passe_contrat|default:"No comment available" }}<br>
+                        {% endif %}
+                    
+                        <strong>Logo Recherche Premium:</strong> {{ profil.logo_recherche_premium }}<br>
+                        {% if not profil.logo_recherche_premium %}
+                            <strong>Comment Logo Recherche Premium:</strong> {{ profil.comment_logo_recherche_premium|default:"No comment available" }}<br>
+                        {% endif %}
+                    
+                        <strong>Ordre Logo Pub Recherche:</strong> {{ profil.ordre_logo_pub_recherche }}<br>
+
+                        <strong>Mail Bienvenue:</strong> {{ profil.mail_bienvenue }}<br>
+
+                        {% if not profil.mail_bienvenue %}
+                            <strong>Comment Mail Bienvenue:</strong> {{ profil.comment_mail_bienvenue|default:"No comment available" }}<br>
+                        {% endif %}
+                    
+                        <strong>Appel Activation:</strong> {{ profil.appel_activation }}<br>
+                        {% if not profil.appel_activation %}
+                            <strong>Comment Appel Activation:</strong> {{ profil.comment_appel_activation|default:"No comment available" }}<br>
+                        {% endif %}
+                    </li>
+                    
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No profiles available</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Abonnements with Boosts and Client Services -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h2>Abonnements</h2>
+        </div>
+        <div class="card-body">
+            {% if abonnements %}
+                <ul class="list-group">
+                    {% for abonnement in abonnements %}
+                    <li class="list-group-item">
+                        <h3>Abonnement</h3>
+                        <p><strong>Type:</strong> {{ abonnement.type_abonnement }}</p>
+                        <p><strong>Version:</strong> {{ abonnement.version_offre }}</p>
+                        <p><strong>Number of Months:</strong> {{ abonnement.nombre_mois }}</p>
+                        <p><strong>Payment Date:</strong> {{ abonnement.date_de_payement }}</p>
+                        <p><strong>Payment Method:</strong> {{ abonnement.moyen_de_payement }}</p>
+                        <p><strong>Status:</strong> {{ abonnement.statut_de_payement }}</p>
+                        <p><strong>Start Date:</strong> {{ abonnement.date_debut_abonnement }}</p>
+
+                        <!-- Boosts for this Abonnement -->
+                        <div>
+                            <h4>Boosts</h4>
+                            {% if boosts_by_abonnement|dict_get:abonnement.id %}
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Month</th>
+                                            <th>Price</th>
+                                            <th>Date Boost</th>
+                                            <th>End Date</th>
+                                            <th>Mail Pub Facebook</th>
+                                            <th>Mail Result FB</th>
+                                            <th>Mail Temoignage Positive</th>
+                                            <th>Call Result</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for boost in boosts_by_abonnement|dict_get:abonnement.id %}
+                                        <tr>
+                                            <td>{{ boost.mois }}</td>
+                                            <td>{{ boost.boost_prix }}</td>
+                                            <td>{{ boost.date_boost }}</td>
+                                            <td>{{ boost.date_fin }}</td>
+                                            {% with client_services=client_services_by_boost|dict_get:boost.id %}
+                                                {% if client_services %}
+                                                    {% for client_service in client_services%}
+                                                    <td>{{ client_service.mail_pub_facebook|yesno:"yes,no" }}</td>
+                                                    <td>{{ client_service.mail_resultat_fb|yesno:"yes,no" }}</td>
+                                                    <td>{{ client_service.mail_temoignage_positive|yesno:"yes,no" }}</td>
+                                                    <td>{{ client_service.appel_resultat|yesno:"yes,no" }}</td>
+                                                    {% endfor %}
+                                                {% else %}
+                                                    <td colspan="4">No client services available for this boost</td>
+                                                {% endif %}
+                                            {% endwith %}
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            {% else %}
+                                <p>No boosts available</p>
+                            {% endif %}
+                        </div>
+                        <!-- Renouvellements for this Abonnement -->
+                        <div>
+                            <h4>Renouvellements</h4>
+                            {% with renouvelements_for_abonnement=renouvelements|dict_get:abonnement.id %}
+                                {% if renouvelements_for_abonnement %}
+                                    <ul class="list-group">
+                                        {% for renouvellement in renouvelements_for_abonnement %}
+                                        <li class="list-group-item">
+                                            <strong>End Date:</strong> {{ renouvellement.date_fin_abonnement }}<br>
+                                            <strong>Preavis Date:</strong> {{ renouvellement.date_preavis_renouvellement }}<br>
+                                            <strong>Note:</strong> {{ renouvellement.remarque }}<br>
+                                            <strong>Possibility of Renewal:</strong> {{ renouvellement.possibilite_renouvellement }}%<br>
+                                            <strong>Mail Preavis:</strong> {{ renouvellement.mail_preavis_abonnement }}<br>
+                                            <strong>Comment Preavis:</strong> {{ renouvellement.comment_mail_preavis_abonnement }}<br>
+                                            <strong>Appointment Date:</strong> {{ renouvellement.date_rdv_renouvellement }}<br>
+                                            <strong>Result:</strong> {{ renouvellement.resultat_rdv }}<br>
+                                        </li>
+                                        {% endfor %}
+                                    </ul>
+                                {% else %}
+                                    <p>No renouvellements available for this abonnement</p>
+                                {% endif %}
+                            {% endwith %}
+                        </div>
+
+                    </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No abonnements available</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
