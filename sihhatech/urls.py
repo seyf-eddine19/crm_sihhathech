@@ -21,11 +21,6 @@ from . import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    path('', admin.site.urls),
-    path('a/', include('crm.urls')),
-] 
-
-urlpatterns = [
     path('', include('crm.urls')),
     path('', admin.site.urls),
 ] 

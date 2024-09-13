@@ -1,8 +1,25 @@
 from django import forms
 from django.forms import inlineformset_factory
-from .models import Client, ClientProfil, Telephone, Abonnement, Version
+from .models import Client, ClientProfil, Telephone, Abonnement, Version, BoostService
 from datetime import datetime, timedelta
 
+from django.db.models import Max
+
+class BoostServiceForm(forms.ModelForm):
+    class Meta:
+        model = BoostService
+        fields = '__all__'
+
+        widgets = {
+            'mois': forms.TextInput(attrs={'readonly': 'readonly', 'value': 0}),  # Make the field readonly in the form
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # if not self.instance.pk and hasattr(self, 'abonnement') and self.abonnement:
+        #     existing_boosts = BoostService.objects.filter(abonnement=self.abonnement)
+        #     max_mois = existing_boosts.aggregate(max_mois=Max('mois'))['max_mois']
+        #     self.fields['mois'].initial = (max_mois or 0) + 1
 
 class AbonnementForm(forms.ModelForm):
     class Meta:

@@ -1,19 +1,26 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.db.models import Q 
-from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.decorators import login_required
 from .models import Client, ClientProfil, Telephone, AbonnementType, Version, Abonnement, Renouvellement, BoostService, ClientService
 from .forms import DateFilterForm
 
-from django.db.models import Sum, Count, Avg
-from django.utils.timezone import now, make_aware
-from datetime import datetime, timedelta
+from django.db.models import Sum, Avg
+from django.utils.timezone import now
+from datetime import timedelta
 
 from django.db.models.functions import TruncMonth
 
-
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.admin.models import LogEntry
+from django.http import HttpResponse
+from .actions import import_from_excel
+
+def import_excel_view(request):
+    if request.method == 'POST' and 'file' in request.FILES:
+        file = request.FILES['file']
+        import_from_excel(file)
+        return HttpResponse('File imported successfully.')
+    return HttpResponse('Invalid request.')
+
 
 @login_required(login_url='login/')
 @staff_member_required

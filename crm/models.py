@@ -1,5 +1,7 @@
+import os
 from django.db import models
-from django.core.validators import MinValueValidator, MaxValueValidator
+from django.core.validators import MinValueValidator, MaxValueValidator 
+from django.db.models import Max
 
 
 class Client(models.Model):
@@ -52,6 +54,36 @@ class ClientProfil(models.Model):
         return f"Profile for {self.client.nom} {self.client.prenom}"
 
 
+class ClientDocument(models.Model):
+    client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='documents', verbose_name="Client")
+    titre = models.CharField(max_length=255, verbose_name="Titre du Document")
+    fichier = models.FileField(upload_to='documents/', verbose_name="Fichier")
+    date_upload = models.DateField(auto_now_add=True, verbose_name="Date de Téléchargement")
+       
+    def file_type(self):
+        name, extension = os.path.splitext(self.document.name)
+        return extension.lower()
+
+    @property
+    def is_image(self):
+        return self.file_type() in ['.jpg', '.jpeg', '.png', '.gif']
+
+    @property
+    def is_pdf(self):
+        return self.file_type() == '.pdf'
+
+    @property
+    def is_excel(self):
+        return self.file_type() in ['.xls', '.xlsx']
+
+    @property
+    def is_word(self):
+        return self.file_type() in ['.doc', '.docx']
+    
+    def __str__(self):
+        return f"{self.titre} - {self.client.nom} {self.client.prenom}"
+
+
 class Telephone(models.Model):
     id = models.AutoField(primary_key=True)
     client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='telephones')
@@ -79,8 +111,9 @@ class Version(models.Model):
 
 class Abonnement(models.Model):
     client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='abonnements')
-    type_abonnement = models.ForeignKey(AbonnementType, on_delete=models.CASCADE, related_name='abonnements')
-    version_offre = models.ForeignKey(Version, on_delete=models.CASCADE, related_name='abonnements')
+    type_abonnement = models.ForeignKey(Version, on_delete=models.CASCADE, related_name='abonnements')
+    # type_abonnement = models.ForeignKey(AbonnementType, on_delete=models.CASCADE, related_name='abonnements')
+    # version_offre = models.ForeignKey(Version, on_delete=models.CASCADE, related_name='abonnements')
     nombre_mois = models.IntegerField()
     date_de_payement = models.DateField()
     moyen_de_payement = models.CharField(max_length=50)
@@ -88,7 +121,7 @@ class Abonnement(models.Model):
     date_debut_abonnement = models.DateField()
     
     def __str__(self):
-        return f"{self.client} - {self.version_offre}"
+        return f"{self.client} - {self.type_abonnement}"
 
 
 class Renouvellement(models.Model):
@@ -122,21 +155,50 @@ class BoostService(models.Model):
     date_boost = models.DateField(default='')
     date_fin = models.DateField()
 
+    def save(self, *args, **kwargs):
+        is_new = self._state.adding
+        if is_new:
+            existing_boosts = BoostService.objects.filter(abonnement=self.abonnement)
+            max_mois = existing_boosts.aggregate(max_mois=Max('mois'))['max_mois']
+            self.mois = (max_mois or 0) + 1
+            
+        super().save(*args, **kwargs)
+          
+        if is_new:
+            try:
+                ClientService.objects.create(
+                    boost_service=self,
+                    abonnement=self.abonnement,
+                    mail_pub_facebook=False,
+                    comment_mail_pub_facebook='',
+                    mail_resultat_fb=False,
+                    comment_mail_resultat_fb='',
+                    mail_temoignage_positive=False,
+                    comment_mail_temoignage_positive='',
+                    appel_resultat=False,
+                    comment_appel_resultat='',
+                )
+                print(f"ClientService created successfully for BoostService: {self}")
+            except Exception as e:
+                print(f"Failed to create ClientService: {e}")
+
     def __str__(self):
-        return f"Boost mois {self.mois} - {self.abonnement}"
+        abonnement_str = self.abonnement.type_abonnement if self.abonnement else 'No Abonnement'
+        return f"Boost mois {self.mois} - {abonnement_str}"
 
 
 class ClientService(models.Model):
     boost_service = models.OneToOneField(BoostService, on_delete=models.CASCADE, related_name='client_service')
-    mail_pub_facebook = models.BooleanField()
+    abonnement = models.ForeignKey(Abonnement, on_delete=models.CASCADE, related_name='client_services')  
+    mail_pub_facebook = models.BooleanField(default=False)
     comment_mail_pub_facebook = models.CharField(max_length=255, blank=True, null=True)
-    mail_resultat_fb = models.BooleanField()
+    mail_resultat_fb = models.BooleanField(default=False)
     comment_mail_resultat_fb = models.CharField(max_length=255, blank=True, null=True)
-    mail_temoignage_positive = models.BooleanField()
+    mail_temoignage_positive = models.BooleanField(default=False)
     comment_mail_temoignage_positive = models.CharField(max_length=255, blank=True, null=True)
-    appel_resultat = models.BooleanField()
+    appel_resultat = models.BooleanField(default=False)
     comment_appel_resultat = models.CharField(max_length=255, blank=True, null=True)
 
     def __str__(self):
-        return f"Client Service for {self.boost_service.abonnement} - mois {self.boost_service.mois}"
+        return f"{self.boost_service}"
     
